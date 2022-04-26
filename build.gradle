@@ -394,3 +394,10 @@ configure(rootProject) {
 		}
 	}
 }
+
+dependencies {
+    implementation 'org.laxture:spring-static-ctx:0.1.2'
+    implementation 'com.gitlab.spacetrucker:modular-spring-contexts:0.3.2'
+    implementation 'org.realityforge.javax.annotation:javax.annotation:1.0.1'
+    implementation 'org.jberet.test-apps:postConstruct:1.0.0.CR1'
+}

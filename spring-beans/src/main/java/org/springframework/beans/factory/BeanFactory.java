@@ -21,7 +21,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 /**
- * The root interface for accessing a Spring bean container.
+ * The root interface for accessing a Spring bean container. 访问根接口的Spring bean容器
  *
  * <p>This is the basic client view of a bean container;
  * further interfaces such as {@link ListableBeanFactory} and
@@ -102,7 +102,7 @@ import org.springframework.lang.Nullable;
  * @see BeanNameAware#setBeanName
  * @see BeanClassLoaderAware#setBeanClassLoader
  * @see BeanFactoryAware#setBeanFactory
- * @see org.springframework.context.EnvironmentAware#setEnvironment
+ * @see org.springframework.context.EnvironmentAware# setEnvironment
  * @see org.springframework.context.EmbeddedValueResolverAware#setEmbeddedValueResolver
  * @see org.springframework.context.ResourceLoaderAware#setResourceLoader
  * @see org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher
