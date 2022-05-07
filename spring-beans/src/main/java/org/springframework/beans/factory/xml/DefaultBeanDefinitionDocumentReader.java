@@ -91,7 +91,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * specified at the {@code <beans/>} level; then parses the contained bean definitions.
 	 */
 	@Override
-	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
+	public void  registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
 		doRegisterBeanDefinitions(doc.getDocumentElement());
 	}
@@ -118,13 +118,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Register each bean definition within the given root {@code <beans/>} element.
 	 */
 	@SuppressWarnings("deprecation")  // for Environment.acceptsProfiles(String...)
-	protected void doRegisterBeanDefinitions(Element root) {
+	protected void  doRegisterBeanDefinitions(Element root) {
 		// Any nested <beans> elements will cause recursion in this method. In
 		// order to propagate and preserve <beans> default-* attributes correctly,
 		// keep track of the current (parent) delegate, which may be null. Create
 		// the new (child) delegate with a reference to the parent for fallback purposes,
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
+		//BeanDefinitionParserDelegate 中定义了 Spring Bean 定义 XML 文件的各种元素
 		BeanDefinitionParserDelegate parent = this.delegate;
 		this.delegate = createDelegate(getReaderContext(), root, parent);
 
@@ -145,22 +146,34 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 
+		//在解析Bean自定义之前，进行自定义的解析，增强解析过程的可扩展性
 		preProcessXml(root);
+		//从Document的根元素进行Bean定义的Document对象
 		parseBeanDefinitions(root, this.delegate);
+		//在解析Bean定义之后，进行自定义的解析，增加解析过程的可扩展性
 		postProcessXml(root);
 
 		this.delegate = parent;
 	}
 
+	/**
+	 * 创建BeanDefinitionParserDelegate，用于完成真正的解析
+	 * @param readerContext
+	 * @param root
+	 * @param parentDelegate
+	 * @return
+	 */
 	protected BeanDefinitionParserDelegate createDelegate(
 			XmlReaderContext readerContext, Element root, @Nullable BeanDefinitionParserDelegate parentDelegate) {
 
 		BeanDefinitionParserDelegate delegate = new BeanDefinitionParserDelegate(readerContext);
+		//初始化Document根元素
 		delegate.initDefaults(root, parentDelegate);
 		return delegate;
 	}
 
 	/**
+	 * 使用Spring的Bean规则从Document的根元素开始进行Bean定义的Document对象
 	 * Parse the elements at the root level in the document:
 	 * "import", "alias", "bean".
 	 * @param root the DOM root element of the document
@@ -182,17 +195,27 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 		else {
+			//规则解析Document根节点
 			delegate.parseCustomElement(root);
 		}
 	}
 
+	/**
+	 * 使用Spring的Bean规则解析Document元素节点
+	 * @param ele
+	 * @param delegate
+	 */
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
+		//如果元素节点是<Import>导入元素，进行导入解析
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
 			importBeanDefinitionResource(ele);
 		}
+		//如果元素节点是<Alias>别名元素，进行别名解析
 		else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
 			processAliasRegistration(ele);
 		}
+		//元素节点既不是导入元素，也不是别名元素，即普通的<Bean>元素，
+		//按照 Spring 的 Bean 规则解析元素
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
 			processBeanDefinition(ele, delegate);
 		}
@@ -203,11 +226,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	/**
+	 * 解析<Import>导入元素，从给定的导入路径加载 Bean 配置资源到 Spring IOC 容器中
 	 * Parse an "import" element and load the bean definitions
 	 * from the given resource into the bean factory.
 	 */
 	protected void importBeanDefinitionResource(Element ele) {
+		//获取给定的导入元素的 location 属性
 		String location = ele.getAttribute(RESOURCE_ATTRIBUTE);
+		//如果导入元素的 location 属性值为空，则没有导入任何资源，直接返回
 		if (!StringUtils.hasText(location)) {
 			getReaderContext().error("Resource location must not be empty", ele);
 			return;
@@ -299,6 +325,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	/**
+	 * 使用Spring的Bean规则，从Document的根元素开始进行Bean定义的Document对象
 	 * Process the given bean element, parsing the bean definition
 	 * and registering it with the registry.
 	 */
